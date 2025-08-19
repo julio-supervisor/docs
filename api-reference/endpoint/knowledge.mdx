@@ -1,0 +1,32 @@
+---
+title: "Q&A"
+description: "Responde preguntas usando el conocimiento del agente (Knowledge Base)"
+openapi: "POST /webhook/f71de932-772a-43d6-a7e9-e135c0b03eaa"
+---
+
+Este endpoint devuelve respuestas basadas en la Knowledge Base asociada al `chatbotId`.
+
+- Autenticación: header `X-API-Key` (por workspace). Ver API reference → Keys.
+- Requiere: `chatbotId` y `query`.
+
+## Ejemplo de solicitud
+
+```json
+{
+  "query": "cómo puedo evaluar",
+  "chatbotId": "<chatbot-id>"
+}
+```
+
+## Comportamiento
+
+- Busca pasajes/documentos relevantes y genera una respuesta.
+- Si la confianza es baja o no hay resultados, devuelve una respuesta genérica y/o error 404 según configuración.
+- Opcional: control de `topK` para ajustar el número de pasajes considerados.
+
+## Respuesta
+
+- `answer`: texto generado.
+- `citations[]`: referencias a documentos usados (docId, título, url, snippet, score).
+
+Recomendado: validar la respuesta y aplicar umbrales de confianza en producción (ver “Fiabilidad”).

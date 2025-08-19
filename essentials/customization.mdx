@@ -1,0 +1,127 @@
+---
+title: "Personalización"
+description: "Ajusta agente, prompts, flujos, conocimiento, Tools, voz y canales para tu caso de uso"
+icon: "wand-magic-sparkles"
+---
+
+Personaliza la experiencia end‑to‑end sin tocar código: tono del agente, reglas de conversación, flujos, Knowledge Base, Tools, voz/telefonía y canales.
+
+## Agente (branding y tono)
+
+- Nombre, avatar e idioma principal.
+- Tono (friendly/professional) y estilo de respuestas.
+- Mensajes de bienvenida y cierre; fuera de horario.
+
+<Tip>
+  Mantén el tono consistente con tu marca y define ejemplos de “respuesta
+  ideal”.
+</Tip>
+
+## Prompts y memoria
+
+- System Prompt con reglas claras (qué sí/no hacer) y variables: brand, region, product.
+- Memory window (nº de turnos recordados) y límites de tokens.
+- Políticas: no inventar precios, no compartir PII, cita fuentes si aplica.
+
+## Flujos (Flow Editor)
+
+- Nodos comunes: Start, Message, Decision, Action, Timer, End.
+- Condiciones por intent/entidad/score y fallbacks por timeout o error.
+- Ramas “happy path” y “recovery”. Publica cambios versionados.
+
+## Conocimiento (Knowledge Base)
+
+- Top‑K y umbral de similitud; filtros por etiquetas.
+- Políticas de actualización: auto‑sync vs manual; tamaño de chunk.
+- Opcional: mostrar citas o snippets en la respuesta.
+
+## Tools
+
+- Activación condicional por intent/rol/entorno.
+- Timeouts, retries y manejo de errores con mensajes útiles.
+- Rate limits y visibilidad por Workspace.
+
+## Voz/Telefonía
+
+- Selección de voz, speaking rate y pausas.
+- Barge‑in, detección de silencio y DTMF.
+- Mensajes de bienvenida, espera y cierre.
+
+## Canales de mensajería
+
+- Mensaje inicial, typing indicators y adjuntos permitidos.
+- Triggers de human handoff (palabras clave, intent, score de confianza).
+- Localización por canal (idioma, moneda y formatos regionales).
+
+## Webchat (branding)
+
+- Colores, logo, posición del widget y textos del launcher.
+- Consentimiento y aviso de privacidad.
+
+## Multi‑tenant y entornos
+
+- Overrides por Workspace (branding, idioma, Tools).
+- Sandbox vs Production con toggles seguros.
+
+## Internacionalización y accesibilidad
+
+- Locales múltiples; moneda/fecha por región.
+- Textos alternativos y claridad de voz.
+
+## Seguridad y privacidad
+
+- Redacción/ocultación de PII.
+- Retención y borrado de datos conversacionales.
+
+## Pruebas y validación
+
+- Checklists por canal y casos límite: sin KB, Tool lenta, baja similitud, intent ambiguo.
+- Usa Sandbox y Playground antes de publicar.
+
+## Ejemplo de configuración (ilustrativo)
+
+```json
+{
+  "agent": {
+    "name": "Soporte",
+    "tone": "professional",
+    "languages": ["es", "en"]
+  },
+  "prompt": {
+    "system": "Ayuda concisa y precisa.",
+    "variables": ["brand", "region"],
+    "memoryWindow": 8
+  },
+  "knowledgeBase": {
+    "topK": 5,
+    "similarity": 0.82,
+    "filters": ["product:payments"]
+  },
+  "tools": [
+    {
+      "name": "Geocoding",
+      "enabled": true,
+      "conditions": "intent:delivery",
+      "timeoutMs": 4000,
+      "retries": 1
+    }
+  ],
+  "voice": { "voice": "neutral", "rate": 1.0, "bargeIn": true },
+  "channels": {
+    "webchat": {
+      "theme": "brand",
+      "launcherText": "¿Necesitas ayuda?",
+      "handoffTrigger": "intent:handoff"
+    }
+  }
+}
+```
+
+## Checklist rápida
+
+- [ ] Tono y System Prompt definidos
+- [ ] KB con top‑K/umbral ajustados
+- [ ] Tools con timeouts/retries
+- [ ] Flujos con fallbacks
+- [ ] Voice/Telephony y/o canales configurados
+- [ ] Pruebas en Sandbox y publicación

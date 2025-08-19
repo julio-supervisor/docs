@@ -1,33 +1,35 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "Introducción"
+description: "Referencia de API de Agents Studio"
 ---
 
 <Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
+  Esta sección documenta el webhook de chat usado por el widget e integraciones.
+  El resto de endpoints se irán agregando.
 </Note>
 
-## Welcome
+## Bienvenido
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+Puedes construir la referencia con [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) o [MDX](https://mintlify.com/docs/api-playground/mdx/configuration). Aquí usamos un OpenAPI mínimo local.
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
+<Card title="Agents Studio API" icon="bot" href="/api-reference/openapi.json">
+  Ver el archivo OpenAPI
 </Card>
 
-## Authentication
+## Autenticación
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+Todos los endpoints requieren una API Key simple (estilo n8n).
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+- Header: `X-API-Key: <TU_API_KEY>`
+- Cómo obtenerla: desde la propia herramienta, copia tu clave en la sección de API Keys.
+
+Ejemplo (pseudocódigo):
+
+```http
+POST /webhook/... HTTP/1.1
+Host: api.workflows.getsupervisor.ai
+Content-Type: application/json
+X-API-Key: TU_API_KEY
+
+{ "chatbotId": "...", "phone": "..." }
 ```

@@ -1,87 +1,61 @@
 ---
-title: 'Navigation'
-description: 'The navigation field in docs.json defines the pages that go in the navigation menu'
-icon: 'map'
+title: "Navegación"
+description: "Cómo está organizada la interfaz de Agents Studio y dónde encontrar cada función"
+icon: "map"
 ---
 
-The navigation menu is the list of links on every website.
+Esta guía describe la estructura de navegación de Agents Studio para que ubiques rápido las áreas de trabajo.
 
-You will likely update `docs.json` every time you add a new page. Pages do not show up automatically.
+## Estructura principal
 
-## Navigation syntax
+- Dashboard
+  - Resumen de agentes, accesos rápidos a crear agente y enlaces a vistas clave.
+- Agentes
+  - Lista de agentes con estado y versión.
+  - Acciones: crear, clonar, editar, publicar.
+  - Acceso al Playground del agente.
+- Flow Editor
+  - Edición visual del flujo: Start, Message, Decision, Action, Timer, End.
+  - Validación de conexiones y publicación de cambios.
+- Knowledge Base
+  - Sincronización de documentos, estado de indexación y búsqueda semántica.
+  - Filtros por etiquetas y control de top‑K/umbral.
+- Tools
+  - Activación y configuración de herramientas (Voice/Telephony, Geocoding, Human Handoff, etc.).
+  - Condiciones de invocación, timeouts y reintentos.
+- Workspaces
+  - Cambio de Workspace (multi‑tenant) desde el selector.
+- Entornos
+  - Conmutador Sandbox / Production visible junto al selector de Workspace.
 
-Our navigation syntax is recursive which means you can make nested navigation groups. You don't need to include `.mdx` in page names.
+<Tip>
+  Según tu rol, podrías ver sólo Sandbox o ambos entornos. Publica cambios
+  cuando hayas validado en Sandbox.
+</Tip>
 
-<CodeGroup>
+## Patrones de navegación
 
-```json Regular Navigation
-"navigation": {
-  "tabs": [
-    {
-      "tab": "Docs",
-      "groups": [
-        {
-          "group": "Getting Started",
-          "pages": ["quickstart"]
-        }
-      ]
-    }
-  ]
-}
-```
+- Barra superior
+  - Selector de Workspace y entorno.
+  - Acceso a perfil y ayuda.
+- Sidebar
+  - Secciones plegables con acceso a Agentes, Flow Editor, Knowledge Base y Tools.
+  - El elemento activo queda resaltado.
 
-```json Nested Navigation
-"navigation": {
-  "tabs": [
-    {
-      "tab": "Docs",
-      "groups": [
-        {
-          "group": "Getting Started",
-          "pages": [
-            "quickstart",
-            {
-              "group": "Nested Reference Pages",
-              "pages": ["nested-reference-page"]
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
+## Atajos de trabajo
 
-</CodeGroup>
+- Crear agente: desde Dashboard o Agentes → “Nuevo agente”.
+- Editar flujo: entra al agente y abre Flow Editor.
+- Probar antes de publicar: usa el Playground del agente.
 
-## Folders
+## Buenas prácticas
 
-Simply put your MDX files in folders and update the paths in `docs.json`.
+- Usa nombres claros para agentes y flujos; agrega descripciones cortas.
+- Centraliza documentos por tema en Knowledge Base y etiqueta por producto/área.
+- Activa sólo las Tools necesarias y define condiciones de invocación.
 
-For example, to have a page at `https://yoursite.com/your-folder/your-page` you would make a folder called `your-folder` containing an MDX file called `your-page.mdx`.
+## Enlaces útiles
 
-<Warning>
-
-You cannot use `api` for the name of a folder unless you nest it inside another folder. Mintlify uses Next.js which reserves the top-level `api` folder for internal server calls. A folder name such as `api-reference` would be accepted.
-
-</Warning>
-
-```json Navigation With Folder
-"navigation": {
-  "tabs": [
-    {
-      "tab": "Docs",
-      "groups": [
-        {
-          "group": "Group Name",
-          "pages": ["your-folder/your-page"]
-        }
-      ]
-    }
-  ]
-}
-```
-
-## Hidden pages
-
-MDX files not included in `docs.json` will not show up in the sidebar but are accessible through the search bar and by linking directly to them.
+- Acceso: https://app.getsupervisor.ai
+- Agents Studio: https://agents.studio.getsupervisor.ai
+- Quickstart: /quickstart

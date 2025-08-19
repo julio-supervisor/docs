@@ -1,0 +1,111 @@
+---
+title: "Chat Widget"
+description: "Incrusta un chat en tu sitio web para conectar con tu chatbot de Agents Studio."
+icon: "/images/icons/chat-widget.svg"
+---
+
+<Icon icon="/images/icons/chat-widget.svg" size={28} />
+
+<Note>
+  Este widget permite agregar un chat en tu web con mínimo esfuerzo. La
+  autenticación del backend se mantiene segura en Agents Studio; no expongas tu
+  API Key en el navegador.
+</Note>
+
+## Instalación rápida
+
+1. Entra a Agents Studio → Settings → Deploy → Chat Widget.
+2. Copia el snippet de instalación.
+3. Pégalo antes del cierre de <code>&lt;/body&gt;</code> en tu sitio.
+
+Ejemplo de snippet (placeholders):
+
+```html
+<script
+  src="https://agents.studio.getsupervisor.ai/widget.js"
+  data-widget-id="YOUR_WIDGET_ID"
+  data-theme="auto"
+  data-position="bottom-right"
+  async
+></script>
+```
+
+Parámetros comunes (data-attributes):
+
+- data-widget-id: identificador público del widget asociado a tu chatbot.
+- data-theme: "light" | "dark" | "auto".
+- data-position: "bottom-right" | "bottom-left".
+- data-primary-color: color principal (hex), opcional.
+- data-launcher-text: texto del botón flotante, opcional.
+- data-welcome-message: mensaje inicial opcional.
+
+## API del widget (opcional)
+
+Cuando el script carga, expone un objeto global <code>window.SupervisorChat</code>:
+
+```js
+// abrir/cerrar
+window.SupervisorChat.open();
+window.SupervisorChat.close();
+window.SupervisorChat.toggle();
+
+// enviar mensaje programáticamente
+window.SupervisorChat.sendMessage("Hola");
+
+// escuchar eventos
+window.SupervisorChat.on("ready", () => {
+  /* listo */
+});
+window.SupervisorChat.on("open", () => {
+  /* se abrió */
+});
+window.SupervisorChat.on("close", () => {
+  /* se cerró */
+});
+window.SupervisorChat.on("message", (msg) => {
+  /* mensaje entrante/saliente */
+});
+window.SupervisorChat.on("error", (err) => {
+  /* manejar errores */
+});
+```
+
+## Sesiones y contexto
+
+- El widget administra una <strong>sessionId</strong> por navegador de forma automática.
+- Puedes pasar metadatos del usuario (si corresponde) de dos formas:
+  - Atributos: <code>data-user-id</code>, <code>data-user-name</code>.
+  - Vía API: <code>window.SupervisorChat.setUser({ id, name, email })</code>.
+- Para resetear la conversación: <code>window.SupervisorChat.reset()</code>.
+
+## Estilos y branding
+
+- Soporta variables CSS para adaptar colores y tipografías.
+
+```css
+:root {
+  --supervisor-primary: #16a34a;
+  --supervisor-text: #0f172a;
+}
+```
+
+- También puedes ajustar <em>theme</em> y <em>primary color</em> por data-attributes.
+
+## Seguridad
+
+- No coloques tu <strong>API Key</strong> en código cliente. El widget se comunica con Agents Studio de forma segura.
+- Si necesitas llamar tus propios endpoints, hazlo desde tu backend usando <code>X-API-Key</code> (ver <strong>API reference → Keys</strong>).
+- Recomendado: configurar <em>allowlist</em> de dominios del widget en Settings.
+
+## Resolución de problemas
+
+- El widget no carga:
+  - Verifica el <code>data-widget-id</code> y que el dominio esté permitido.
+  - Revisa la <strong>Content Security Policy</strong> de tu sitio.
+- Botón no visible: conflictos de CSS. Ajusta z-index del launcher.
+- Bloqueadores: algunos ad blockers pueden interferir; prueba en modo incógnito.
+
+## Siguientes pasos
+
+- Conecta Tools y rutas de diálogo en tu chatbot.
+- Para voz/telefonía o webhooks: revisa <strong>API reference → Endpoints</strong>.

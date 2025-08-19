@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" fill="none">
+    <rect width="1200" height="600" fill="#0B1220" />
+    <rect x="40" y="40" width="1120" height="520" rx="16" fill="#0F172A" stroke="#233042" />
+    <rect x="60" y="80" width="200" height="480" rx="12" fill="#111827" stroke="#233042" />
+    <rect x="280" y="80" width="860" height="480" rx="12" fill="#111827" stroke="#233042" />
+    <rect x="320" y="140" width="180" height="60" rx="8" fill="#1F2937" stroke="#334155" />
+    <rect x="540" y="260" width="200" height="60" rx="8" fill="#1F2937" stroke="#334155" />
+    <rect x="820" y="360" width="180" height="60" rx="8" fill="#1F2937" stroke="#334155" />
+    <line x1="500" y1="170" x2="540" y2="290" stroke="#334155" stroke-width="2"
+        marker-end="url(#arrow)" />
+    <line x1="740" y1="290" x2="820" y2="390" stroke="#334155" stroke-width="2"
+        marker-end="url(#arrow)" />
+    <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#334155" />
+        </marker>
+    </defs>
+    <text x="60" y="70" font-family="Inter, Arial" font-size="18" fill="#9CA3AF">Flow Editor — Nodes</text>
+    <text x="40" y="580" font-family="Inter, Arial" font-size="12" fill="#94A3B8">Placeholder —
+        Editor de flujos con nodos conectados</text>
+</svg>

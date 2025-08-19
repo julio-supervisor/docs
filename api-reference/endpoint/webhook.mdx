@@ -1,4 +1,10 @@
 ---
-title: 'New Plant'
-openapi: 'WEBHOOK /plant/webhook'
+title: "Comenzar chat"
+openapi: "POST /webhook/ce030dec-668f-4283-8946-d68114714de6/chat"
 ---
+
+<Note>
+  Este endpoint requiere <code>chatbotId</code> en el cuerpo. Si el asistente no
+  está disponible (por ejemplo, fuera de horario de atención), puede responder
+  con <code>400</code> y un código <code>BOT_NOT_AVAILABLE</code>.
+</Note>

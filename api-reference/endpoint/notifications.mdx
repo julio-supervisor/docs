@@ -1,0 +1,131 @@
+---
+title: "Configurar webhook"
+openapi: "POST /webhook/9c10b338-554c-46a8-a54d-dbea7f67ccf1"
+---
+
+<Note>
+  Registra una URL de webhook para recibir eventos de estado de llamadas.
+  Inspirado en el modelo de Retell, enviaremos eventos como{" "}
+  <code>call.status.updated</code>.
+</Note>
+
+<Info>
+  Autenticación requerida al configurar: incluye <code>X-API-Key</code> con tu
+  clave de API. Las notificaciones salientes hacia tu URL se pueden firmar con{" "}
+  <code>secret</code> (opcional).
+</Info>
+
+## Casos de uso
+
+- Actualizar tu CRM cuando una llamada cambie de estado (registered → ongoing → ended).
+- Guardar la URL de grabación y logs públicos cuando finalice una llamada.
+- Auditar errores de telefonía y reintentos.
+
+## Ejemplo de solicitud
+
+```json
+{
+  "chatbotId": "474bce20-c518-4295-bf8d-a3ad4396f6df",
+  "url": "https://miapp.com/webhooks/supervisor",
+  "events": ["call.status.updated", "call.completed", "call.error"],
+  "secret": "whsec_********"
+}
+```
+
+## Respuesta
+
+```json
+{
+  "id": "cfg_01J7W8A1S1VZ8T2Q3R4S",
+  "chatbotId": "474bce20-c518-4295-bf8d-a3ad4396f6df",
+  "url": "https://miapp.com/webhooks/supervisor",
+  "events": ["call.status.updated", "call.completed", "call.error"],
+  "createdAt": "2025-08-19T16:00:00.000Z"
+}
+```
+
+## Notificaciones que enviaremos
+
+Publicaremos eventos a tu URL en formato JSON. Incluimos ejemplos típicos:
+
+### call.status.updated — registrada
+
+```json
+{
+  "id": "evt_01J7W8A4XK0N5Y6Z7Q8P",
+  "type": "call.status.updated",
+  "created_at": "2025-08-19T16:01:00.000Z",
+  "data": {
+    "call_id": "Jabr9TXYYJHfvl6Syypi88rdAHYHmcq6",
+    "call_status": "registered",
+    "direction": "outbound",
+    "to_number": "+525538808448"
+  }
+}
+```
+
+### call.status.updated — en curso
+
+```json
+{
+  "id": "evt_01J7W8A5A1B2C3D4E5F6",
+  "type": "call.status.updated",
+  "created_at": "2025-08-19T16:01:10.000Z",
+  "data": {
+    "call_id": "Jabr9TXYYJHfvl6Syypi88rdAHYHmcq6",
+    "call_status": "ongoing",
+    "from_number": "+12137771234",
+    "to_number": "+525538808448",
+    "agent_id": "oBeDLoLOeuAbiuaMFXRtDOLriTJ5tSxD"
+  }
+}
+```
+
+### call.status.updated — finalizada
+
+```json
+{
+  "id": "evt_01J7W8A6G7H8I9J0K1L2",
+  "type": "call.status.updated",
+  "created_at": "2025-08-19T16:05:00.000Z",
+  "data": {
+    "call_id": "Jabr9TXYYJHfvl6Syypi88rdAHYHmcq6",
+    "call_status": "ended",
+    "disconnection_reason": "agent_hangup",
+    "duration_ms": 10000,
+    "recording_url": "https://example.com/recording.wav",
+    "public_log_url": "https://example.com/public_log.txt"
+  }
+}
+```
+
+### call.status.updated — error
+
+```json
+{
+  "id": "evt_01J7W8A7M8N9O0P1Q2R3",
+  "type": "call.status.updated",
+  "created_at": "2025-08-19T16:02:00.000Z",
+  "data": {
+    "call_id": "Jabr9TXYYJHfvl6Syypi88rdAHYHmcq6",
+    "call_status": "error",
+    "error_code": "telephony_provider_unavailable",
+    "error_message": "Carrier unavailable"
+  }
+}
+```
+
+## Validación de firmas (opcional)
+
+Si configuras <code>secret</code>, firmaremos cada notificación con HMAC-SHA256 en el header <code>X-Supervisor-Signature</code> usando el formato <code>sha256=HEX</code>.
+
+## Reintentos y respuestas
+
+- Esperamos 2xx de tu servidor. Si no, reintentaremos con backoff.
+- Responde 200 OK lo antes posible (procesa de forma asíncrona si es necesario).
+
+## Buenas prácticas
+
+- Usa colas para procesar eventos.
+- Idempotencia: guarda <code>id</code> del evento para evitar duplicados.
+- Verifica la firma si definiste <code>secret</code>.

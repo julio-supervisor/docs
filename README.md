@@ -1,44 +1,93 @@
-# Mintlify Starter Kit
+# Agents Studio Docs
 
-Use the starter kit to get your docs deployed and ready to customize.
+Documentación oficial de Agents Studio: crea y orquesta agentes de IA (texto y voz) con flujos visuales, knowledge base, Tools y multi‑tenant.
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+## 🚀 Quickstart
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
+1. Crea una cuenta y accede al Workspace
+	- Crea tu cuenta en [app.getsupervisor.ai](https://app.getsupervisor.ai) o únete a un Workspace existente invitado por tu organización.
+	- Con esa misma cuenta podrás entrar a Agents Studio en [https://agents.studio.getsupervisor.ai](https://agents.studio.getsupervisor.ai) y seleccionar tu Workspace (Sandbox o Production).
 
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
+2. Crea tu primer agente
+	- Define nombre, avatar y tono. Ajusta el System Prompt e instrucciones específicas.
+	- Usa el Playground para validar respuestas antes de publicar.
 
-## Development
+3. Diseña el flujo de conversación
+	- Abre el Editor Visual y arrastra nodos: Start → Message/Decision/Action → End.
+	- Valida conexiones y guarda; publica cuando estés listo.
 
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
+4. Conecta conocimiento y herramientas
+	- Vincula tu fuente de documentos y habilita vectorización automática.
+	- Activa tools (voz/telefonía, geocoding, escalado a humano, etc.).
 
-```
+5. Itera sobre tu experiencia
+	- Revisa conversaciones de prueba y ajusta prompts, Tools y flujos.
+
+![PLACEHOLDER — Recorrido Quickstart en 5 pasos](/images/placeholder-quickstart-5-steps.png)
+_Prompt para IA: “Infografía UI de 5 pasos para crear y publicar un agente de IA: login, crear agente, editor de flujos, conectar conocimiento/tools, monitoreo; estilo limpio profesional”_
+
+## ✅ Capacidades actuales
+
+- Gestión de agentes con CRUD, versionado, estados (Inactivo/Entrenamiento/Activo/Archivado) y clonación
+- Playground con memoria de conversación y modo debug
+- Flujos visuales con nodos (Start, Message, Decision, Action, Phone, Timer, Message Received, Trace, End)
+- Integración de conocimiento desde Google Drive con vectorización automática
+- Integración de conocimiento desde documentos con vectorización automática
+- Catálogo de tools (+10) con activación condicional y estadísticas de uso
+- Agentes de voz (canal telefónico) reutilizables y asignables
+- Multi-tenant con workspaces y multi-entorno (Sandbox/Producción)
+- Inicio de sesión empresarial (SSO)
+
+![PLACEHOLDER — Grid de funcionalidades con iconos](/images/placeholder-features-grid.png)
+_Prompt para IA: “Cuadrícula moderna de features de una plataforma de agentes de IA, iconografía minimalista, texto corto por tarjeta, tema neutro”_
+
+## 🔌 Tools e integraciones
+
+- Voice/Telephony Tool para experiencias de voz
+- Geocoding Tool para ubicaciones y distancias
+- Human Handoff Tool para escalar a un humano
+- Knowledge Base connector para indexar documentos (Drive‑like) y búsqueda semántica
+- Mensajería (p. ej., WhatsApp, chat web)
+
+![PLACEHOLDER — Diagrama de arquitectura con integraciones](/images/placeholder-architecture.png)
+_Prompt para IA: “Diagrama arquitectónico de alto nivel conectando Frontend web, proveedor de identidad (SSO), almacenamiento de datos, canales de mensajería y conector de Knowledge Base; flechas y etiquetas claras, sin marcas”_
+
+## 🧭 Navegación recomendada
+
+- Introducción y valor: `/` (esta portada)
+- Empezar en minutos: `/quickstart`
+- Markdown, code samples y snippets: `/essentials/*`
+- API Reference (OpenAPI): `/api-reference/introduction`
+
+## 🧪 Buenas prácticas
+
+- Mantén el System Prompt claro y versiona cambios frecuentes.
+- Activa solo las tools necesarias y configura condiciones de invocación.
+- Prueba en Sandbox y usa el Playground antes de publicar en Producción.
+
+
+## 🛟 Troubleshooting
+
+- No veo mi Workspace: verifica que tengas invitación o solicita acceso al admin de tu organización.
+- Google Drive no sincroniza: revisa consentimiento OAuth y vuelve a vincular.
+- Flujos no publican: valida conexiones/nodos y errores en tiempo real.
+- Tokens expirados: la renovación es automática; verifica conectividad de red.
+
+## 📮 Soporte
+
+Escríbenos a [sistemas@getsupervisor.ai](mailto:sistemas@getsupervisor.ai)
+
+---
+
+## Desarrollo de esta documentación
+
+Para previsualizar localmente con Mintlify:
+
+```bash
 npm i -g mint
-```
-
-Run the following command at the root of your documentation, where your `docs.json` is located:
-
-```
 mint dev
 ```
 
-View your local preview at `http://localhost:3000`.
+Vista local en `http://localhost:3000`.
 
-## Publishing changes
-
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
-
-## Need help?
-
-### Troubleshooting
-
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
-
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
-- [Mintlify community](https://mintlify.com/community)
+Publicación: instala la app de GitHub desde el dashboard de Mintlify para despliegue automático al hacer push a la rama por defecto.

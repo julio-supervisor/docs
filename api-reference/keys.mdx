@@ -1,0 +1,52 @@
+---
+title: "Keys"
+description: "Cómo obtener y usar tu API Key por espacio de trabajo"
+---
+
+<Note>
+  Las API Keys son <strong>por espacio de trabajo</strong>. Cada workspace tiene
+  su propia clave y permisos asociados.
+</Note>
+
+## Obtener tu API Key
+
+1. Inicia sesión en Agents Studio.
+2. Ve a Ajustes (Settings) del espacio de trabajo actual.
+3. Abre la sección "API Keys".
+4. Genera una nueva clave o copia una existente.
+
+Sugerencias:
+
+- Asigna un nombre/nota a cada clave para identificar su uso (p. ej., “Producción - Backend”).
+- Mantén las claves en un gestor seguro de secretos.
+
+## Alcance y permisos
+
+- La clave sólo es válida para el <strong>workspace</strong> donde fue emitida.
+- Acceso restringido a los recursos de ese workspace (chatbots, llamadas, notificaciones, etc.).
+- Puedes revocar o rotar una clave sin afectar otras.
+
+## Uso en peticiones
+
+Incluye tu clave en el header HTTP como API Key simple (compatible con n8n):
+
+```http
+X-API-Key: TU_API_KEY
+```
+
+Ejemplo de uso (HTTP):
+
+```http
+POST /webhook/7a6c6697-7dfc-47cf-adc5-c1df3ca559b0 HTTP/1.1
+Host: api.workflows.getsupervisor.ai
+Content-Type: application/json
+X-API-Key: TU_API_KEY
+
+{ "chatbotId": "...", "phone": "..." }
+```
+
+## Rotación y buenas prácticas
+
+- Rotación periódica de claves (al menos trimestral).
+- Revoca claves no utilizadas o comprometidas.
+- Usa claves distintas por entorno (dev/staging/prod).

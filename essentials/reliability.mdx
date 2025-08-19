@@ -1,0 +1,101 @@
+---
+title: "Fiabilidad"
+description: "Buenas prácticas para reducir respuestas incorrectas y operar asistentes robustos en Agents Studio."
+icon: "shield-check"
+---
+
+<Note>
+  Esta guía está ajustada a Agents Studio y resume patrones prácticos para
+  minimizar respuestas incorrectas ("wrong response"), mejorar la precisión y
+  proteger acciones sensibles.
+</Note>
+
+## Objetivos
+
+- Reducir respuestas incorrectas o alucinadas.
+- Evitar acciones no deseadas en Tools/APIs.
+- Escalar a humano cuando sea necesario.
+- Mantener trazabilidad y aprendizaje continuo.
+
+## Patrones recomendados
+
+### 1) Prompts y Tools bien definidos
+
+- Mantén un <strong>System Prompt</strong> claro: objetivo, límites, tono y cuándo decir “no sé”.
+- Restringe al asistente a un <strong>conjunto cerrado de intenciones</strong> y Tools permitidas.
+- Usa <strong>salidas estructuradas</strong> (JSON Schema) cuando el resultado deba validarse antes de ejecutar una acción.
+
+### 2) Validación previa a acciones críticas
+
+- Aplica <strong>políticas</strong>: no ejecutar pagos/cambios sensibles sin confirmación.
+- Requiere <strong>doble confirmación</strong> o <strong>DTMF</strong> (en voz) para operaciones riesgosas.
+- Implementa <strong>lógicas de revisión</strong> (ej. verificación humana) por monto/impacto.
+
+### 3) Recuperación de conocimiento segura
+
+- Usa <strong>retrieval</strong> o snippets autorizados; evita contenido ambiguo.
+- Versiona tu base de conocimiento y prueba regresiones tras cambios.
+
+### 4) Fallbacks y escalamiento
+
+- Si la confianza es baja: pide <strong>aclaración</strong> o responde “No estoy seguro, ¿puedes reformular?”
+- Configura <strong>reglas de rechazo</strong> (mejor no responder que inventar).
+- Escala a <strong>humano</strong> con traspaso de contexto cuando corresponda.
+
+### 5) Voz y telefonía
+
+- Maneja <strong>ASR</strong> (errores de reconocimiento): confirma datos críticos (nombres, números).
+- Usa <strong>DTMF</strong> para confirmar/ingresar dígitos sensibles.
+- Define <strong>pausas/timeout</strong>, barge-in y política de repetición (máx. intentos antes de cerrar o escalar).
+
+## Señales de confianza y verificación
+
+- Valida <strong>schemas</strong> de salidas del asistente antes de llamar Tools.
+- Aplica <strong>listas blancas/regex</strong> para campos estructurados (p. ej., email, fechas, montos).
+- Calcula un <strong>score de confianza</strong> (heurístico o del modelo) y usa <strong>umbrales</strong> para decidir: responder, pedir aclaración o escalar.
+
+## Manejo de errores de API
+
+- 400: entrada inválida u horario fuera de servicio → informa y ofrece alternativas.
+- 401: falta de credenciales → verifica tu <code>X-API-Key</code> (ver <strong>API reference → Keys</strong>).
+- 429: límites de tasa → reintentos con backoff y límites de turnos.
+- 5xx: fallback seguro + registro para investigación.
+- Webhooks: firma y reintentos (ver <strong>API reference → Notifications</strong>).
+
+## Observabilidad y aprendizaje
+
+- Registra eventos clave: entrada, Tools llamadas, salidas y decisiones de política.
+- Etiqueta conversaciones con <strong>resultado</strong> (éxito, rechazo, escalado) para análisis.
+- Reproduce casos problemáticos y mejora prompts, snippets o políticas.
+
+## Pruebas y evals
+
+- Define <strong>casos dorados</strong> (happy path) y <strong>anti-patrones</strong> (edge cases).
+- Automatiza <strong>regresiones</strong> al cambiar prompts, Tools o conocimiento.
+- Incluye datos ruidosos: acentos, errores ortográficos, audio con ruido.
+
+## Configuración sugerida
+
+- Timeouts por canal (chat/voz) y <strong>máx. turnos</strong> por sesión.
+- Límites por Tool y <strong>idempotencia</strong> en tu backend.
+- Políticas de horario de servicio y mensajes “no disponible”.
+
+## Checklists
+
+### Antes de producción
+
+- [ ] System Prompt revisado, intenciones y límites claros.
+- [ ] Validación de outputs (schema/regex) y confirmaciones críticas.
+- [ ] Fallbacks configurados (aclaración, rechazo, mano humana).
+- [ ] Tests de regresión y casos de ruido/voz.
+
+### En producción
+
+- [ ] Monitorea métricas: tasa de éxito, rechazos, escalados, 4xx/5xx.
+- [ ] Reentrena o ajusta prompts según hallazgos.
+- [ ] Revisión periódica de Knowledge y Tools.
+
+## Recursos
+
+- Autenticación por workspace: <strong>API reference → Keys</strong>.
+- Chat webhook, llamadas y notificaciones: <strong>API reference → Endpoints</strong>.

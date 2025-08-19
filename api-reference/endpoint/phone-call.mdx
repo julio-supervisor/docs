@@ -1,0 +1,39 @@
+---
+title: "Iniciar llamada"
+openapi: "POST /webhook/7a6c6697-7dfc-47cf-adc5-c1df3ca559b0"
+---
+
+<Note>
+  Este endpoint inicia una llamada saliente. El cuerpo SOLO acepta{" "}
+  <code>chatbotId</code> y <code>phone</code>. Usa el ID del chatbot configurado
+  y el número en formato internacional recomendado (E.164).
+</Note>
+
+<Info>
+  Autenticación requerida: envía tu API Key en el header <code>X-API-Key</code>.
+</Info>
+
+### Ejemplo de body
+
+```json
+{
+  "chatbotId": "474bce20-c518-4295-bf8d-a3ad4396f6df",
+  "phone": "525538808448"
+}
+```
+
+### Comportamiento esperado
+
+- Registra la llamada y devuelve <code>204 No Content</code> (sin cuerpo de respuesta).
+- Para conocer el progreso (registered/ongoing/ended/error), suscríbete a las notificaciones: consulta <strong>API reference → Notifications</strong>.
+
+### Errores comunes
+
+- 400: datos inválidos (formato del teléfono o campos faltantes)
+- 401: no autorizado
+- 402: capacidad/pago requerido por el proveedor de telefonía
+- 422: validación
+- 429: rate limit
+- 500: error interno
+
+> Nota: No se aceptan parámetros adicionales aparte de <code>chatbotId</code> y <code>phone</code>.

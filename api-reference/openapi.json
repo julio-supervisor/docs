@@ -1,54 +1,112 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
+    "title": "Agents Studio API",
+    "description": "Referencia mínima del endpoint de chat webhook utilizado por el widget y las integraciones de Agents Studio.",
     "version": "1.0.0"
   },
-  "servers": [
-    {
-      "url": "http://sandbox.mintlify.com"
-    }
-  ],
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ],
+  "security": [{ "ApiKeyAuth": [] }],
   "paths": {
-    "/plants": {
-      "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
+    "/webhook/ce030dec-668f-4283-8946-d68114714de6/chat": {
+      "post": {
+        "summary": "Enviar un mensaje al chatbot (texto/audio/imagen)",
+        "description": "Endpoint de chat. Requiere `chatbotId`. Acepta texto como JSON y audio/imagen como multipart/form-data.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatTextRequest"
+              },
+              "examples": {
+                "text": {
+                  "summary": "Mensaje de texto",
+                  "value": {
+                    "sessionId": "3b6b0b6a-6c1a-4c6a-9f2b-7b9e4a1a2d11",
+                    "action": "sendMessage",
+                    "chatInput": "¿Cuál es el estado de mi pedido 1234?",
+                    "chatbotId": "bot_abc123",
+                    "source": "web-widget"
+                  }
+                }
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatMultipartRequest"
+              },
+              "examples": {
+                "audio": {
+                  "summary": "Audio (WebM)",
+                  "value": {
+                    "file": "<binary>",
+                    "sessionId": "3b6b0b6a-6c1a-4c6a-9f2b-7b9e4a1a2d11",
+                    "action": "sendMessage",
+                    "chatbotId": "bot_abc123",
+                    "source": "mobile-app",
+                    "mediaType": "audio",
+                    "format": "audio/webm",
+                    "language": "es-ES"
+                  }
+                },
+                "image": {
+                  "summary": "Imagen (PNG)",
+                  "value": {
+                    "file": "<binary>",
+                    "sessionId": "3b6b0b6a-6c1a-4c6a-9f2b-7b9e4a1a2d11",
+                    "action": "sendMessage",
+                    "chatbotId": "bot_abc123",
+                    "source": "web-widget",
+                    "mediaType": "image",
+                    "format": "image/png",
+                    "caption": "¿Qué dice este documento?"
+                  }
+                }
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Respuesta del chatbot",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
+                  "$ref": "#/components/schemas/ChatResponse"
+                },
+                "examples": {
+                  "ok": {
+                    "summary": "Respuesta con texto",
+                    "value": {
+                      "output": "Tu pedido 1234 está en tránsito y llegará mañana.",
+                      "sessionId": "3b6b0b6a-6c1a-4c6a-9f2b-7b9e4a1a2d11"
+                    }
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Unexpected error",
+            "description": "No permitido responder (p. ej., fuera de horario) o entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "outOfHours": {
+                    "summary": "Fuera de horario de atención",
+                    "value": {
+                      "code": "BOT_NOT_AVAILABLE",
+                      "message": "El asistente no está disponible en este horario."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Tipo de contenido no soportado",
             "content": {
               "application/json": {
                 "schema": {
@@ -56,35 +114,29 @@
                 }
               }
             }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
           },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
+          "422": {
+            "description": "Error de validación",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
           },
-          "400": {
-            "description": "unexpected error",
+          "429": {
+            "description": "Rate limit excedido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno",
             "content": {
               "application/json": {
                 "schema": {
@@ -96,33 +148,275 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
+    "/webhook/7a6c6697-7dfc-47cf-adc5-c1df3ca559b0": {
+      "post": {
+        "summary": "Iniciar llamada telefónica saliente",
+        "description": "Crea una llamada saliente asociada a un chatbot. El cuerpo SOLO acepta `chatbotId` y `phone`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhoneCallRequest"
+              },
+              "examples": {
+                "ejemplo": {
+                  "summary": "Cuerpo mínimo",
+                  "value": {
+                    "chatbotId": "474bce20-c518-4295-bf8d-a3ad4396f6df",
+                    "phone": "525538808448"
+                  }
+                }
+              }
             }
           }
-        ],
+        },
         "responses": {
           "204": {
-            "description": "Plant deleted",
-            "content": {}
+            "description": "Llamada registrada. Sin contenido en la respuesta."
           },
           "400": {
-            "description": "unexpected error",
+            "description": "Entrada inválida (formato de teléfono o falta de campos)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "402": {
+            "description": "Pago requerido (capacidad del proveedor de telefonía)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "422": {
+            "description": "Error de validación",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de peticiones excedido",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webhook/f71de932-772a-43d6-a7e9-e135c0b03eaa": {
+      "post": {
+        "summary": "Responder preguntas con base en el conocimiento del agente",
+        "description": "Devuelve una respuesta basada en la Knowledge Base vinculada al `chatbotId` proporcionado.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KnowledgeQueryRequest"
+              },
+              "examples": {
+                "minimo": {
+                  "summary": "Consulta mínima",
+                  "value": {
+                    "query": "cómo puedo evaluar",
+                    "chatbotId": "<chatbot-id>"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Respuesta encontrada en la Knowledge Base",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/KnowledgeResponse" },
+                "examples": {
+                  "ok": {
+                    "summary": "Respuesta con citas",
+                    "value": {
+                      "answer": "Para evaluar, dirígete a la sección Evaluaciones y selecciona el modelo y conjunto de pruebas.",
+                      "citations": [
+                        {
+                          "docId": "kb_01HXY...",
+                          "title": "Guía de Evaluaciones",
+                          "url": "https://example.com/docs/evaluaciones",
+                          "snippet": "Ve a Evaluaciones > Nueva evaluación...",
+                          "score": 0.86
+                        }
+                      ]
+                    }
+                  },
+                  "sinResultados": {
+                    "summary": "No hay coincidencias suficientes",
+                    "value": {
+                      "answer": "No encontré información suficiente en el conocimiento para responder con precisión.",
+                      "citations": []
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Sin resultados relevantes en la Knowledge Base",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de peticiones excedido",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webhook/9c10b338-554c-46a8-a54d-dbea7f67ccf1": {
+      "post": {
+        "summary": "Configurar URL de notificaciones de llamadas",
+        "description": "Registra o actualiza la URL a la que enviaremos notificaciones del estado de las llamadas para un chatbot.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationConfigRequest"
+              },
+              "examples": {
+                "minimo": {
+                  "summary": "Configuración mínima",
+                  "value": {
+                    "chatbotId": "474bce20-c518-4295-bf8d-a3ad4396f6df",
+                    "url": "https://miapp.com/webhooks/supervisor"
+                  }
+                },
+                "conEventos": {
+                  "summary": "Seleccionando eventos y secreto",
+                  "value": {
+                    "chatbotId": "474bce20-c518-4295-bf8d-a3ad4396f6df",
+                    "url": "https://miapp.com/webhooks/supervisor",
+                    "events": [
+                      "call.status.updated",
+                      "call.completed",
+                      "call.error"
+                    ],
+                    "secret": "whsec_********"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Configuración guardada",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/NotificationConfigResponse"
+                },
+                "examples": {
+                  "ok": {
+                    "summary": "Respuesta de confirmación",
+                    "value": {
+                      "id": "cfg_01J7W8A1S1VZ8T2Q3R4S",
+                      "chatbotId": "474bce20-c518-4295-bf8d-a3ad4396f6df",
+                      "url": "https://miapp.com/webhooks/supervisor",
+                      "events": [
+                        "call.status.updated",
+                        "call.completed",
+                        "call.error"
+                      ],
+                      "createdAt": "2025-08-19T16:00:00.000Z"
+                    }
+                  }
                 }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "422": {
+            "description": "Error de validación",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
               }
             }
           }
@@ -131,86 +425,396 @@
     }
   },
   "webhooks": {
-    "/plant/webhook": {
+    "callStatusUpdated": {
       "post": {
-        "description": "Information about a new plant added to the store",
+        "summary": "Evento: actualización de estado de llamada",
+        "description": "Ejemplo del payload que enviaremos a tu URL configurada cuando cambie el estado de una llamada.",
         "requestBody": {
-          "description": "Plant added to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/CallStatusNotification"
+              },
+              "examples": {
+                "registered": {
+                  "summary": "Llamada registrada",
+                  "value": {
+                    "id": "evt_01J7W8A4XK0N5Y6Z7Q8P",
+                    "type": "call.status.updated",
+                    "created_at": "2025-08-19T16:01:00.000Z",
+                    "data": {
+                      "call_id": "Jabr9TXYYJHfvl6Syypi88rdAHYHmcq6",
+                      "call_status": "registered",
+                      "direction": "outbound",
+                      "to_number": "+525538808448"
+                    }
+                  }
+                },
+                "ongoing": {
+                  "summary": "Llamada en curso",
+                  "value": {
+                    "id": "evt_01J7W8A5A1B2C3D4E5F6",
+                    "type": "call.status.updated",
+                    "created_at": "2025-08-19T16:01:10.000Z",
+                    "data": {
+                      "call_id": "Jabr9TXYYJHfvl6Syypi88rdAHYHmcq6",
+                      "call_status": "ongoing",
+                      "from_number": "+12137771234",
+                      "to_number": "+525538808448",
+                      "agent_id": "oBeDLoLOeuAbiuaMFXRtDOLriTJ5tSxD"
+                    }
+                  }
+                },
+                "ended": {
+                  "summary": "Llamada finalizada",
+                  "value": {
+                    "id": "evt_01J7W8A6G7H8I9J0K1L2",
+                    "type": "call.status.updated",
+                    "created_at": "2025-08-19T16:05:00.000Z",
+                    "data": {
+                      "call_id": "Jabr9TXYYJHfvl6Syypi88rdAHYHmcq6",
+                      "call_status": "ended",
+                      "disconnection_reason": "agent_hangup",
+                      "duration_ms": 10000,
+                      "recording_url": "https://example.com/recording.wav",
+                      "public_log_url": "https://example.com/public_log.txt"
+                    }
+                  }
+                },
+                "error": {
+                  "summary": "Llamada con error",
+                  "value": {
+                    "id": "evt_01J7W8A7M8N9O0P1Q2R3",
+                    "type": "call.status.updated",
+                    "created_at": "2025-08-19T16:02:00.000Z",
+                    "data": {
+                      "call_id": "Jabr9TXYYJHfvl6Syypi88rdAHYHmcq6",
+                      "call_status": "error",
+                      "error_code": "telephony_provider_unavailable",
+                      "error_message": "Carrier unavailable"
+                    }
+                  }
+                }
               }
             }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
           }
         }
       }
     }
   },
   "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          }
-        }
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "Incluye tu API Key en el header X-API-Key. Compatible con n8n (API Key simple)."
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+    "schemas": {
+      "KnowledgeQueryRequest": {
+        "type": "object",
+        "required": ["query", "chatbotId"],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Pregunta del usuario a responder con el conocimiento."
+          },
+          "chatbotId": {
+            "type": "string",
+            "description": "ID del chatbot cuyo conocimiento se consultará."
+          },
+          "topK": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20,
+            "default": 5,
+            "description": "Número de pasajes/documentos a considerar (opcional)."
+          }
+        }
+      },
+      "KnowledgeResponse": {
+        "type": "object",
+        "required": ["answer"],
+        "properties": {
+          "answer": {
+            "type": "string",
+            "description": "Respuesta generada a partir del conocimiento."
+          },
+          "citations": {
+            "type": "array",
+            "description": "Referencias a los documentos que sustentan la respuesta (si aplica).",
+            "items": { "$ref": "#/components/schemas/Citation" }
+          }
+        }
+      },
+      "Citation": {
+        "type": "object",
+        "required": ["docId"],
+        "properties": {
+          "docId": {
+            "type": "string",
+            "description": "Identificador del documento o fragmento."
+          },
+          "title": {
+            "type": "string",
+            "description": "Título del documento (si aplica)."
+          },
+          "url": {
+            "type": "string",
+            "description": "URL pública o interna (si aplica)."
+          },
+          "snippet": {
+            "type": "string",
+            "description": "Fragmento relevante del documento."
+          },
+          "score": {
+            "type": "number",
+            "format": "float",
+            "description": "Puntaje de relevancia (0-1)."
+          }
+        }
+      },
+      "NotificationConfigRequest": {
+        "type": "object",
+        "required": ["chatbotId", "url"],
+        "properties": {
+          "chatbotId": {
+            "type": "string",
+            "description": "ID del chatbot que recibirá notificaciones."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL HTTPS donde se enviarán las notificaciones."
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["call.status.updated", "call.completed", "call.error"]
+            },
+            "description": "Eventos a suscribir. Por defecto, todos."
+          },
+          "secret": {
+            "type": "string",
+            "description": "Secreto opcional para firmar las notificaciones (HMAC-SHA256)."
+          }
+        }
+      },
+      "NotificationConfigResponse": {
+        "type": "object",
+        "required": ["id", "chatbotId", "url", "events", "createdAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "chatbotId": { "type": "string" },
+          "url": { "type": "string", "format": "uri" },
+          "events": { "type": "array", "items": { "type": "string" } },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CallStatusNotification": {
+        "type": "object",
+        "required": ["id", "type", "created_at", "data"],
+        "properties": {
+          "id": { "type": "string", "description": "ID del evento." },
+          "type": {
+            "type": "string",
+            "enum": ["call.status.updated"],
+            "description": "Tipo de evento."
+          },
+          "created_at": { "type": "string", "format": "date-time" },
+          "data": {
+            "type": "object",
+            "required": ["call_id", "call_status"],
+            "properties": {
+              "call_id": { "type": "string" },
+              "call_status": {
+                "type": "string",
+                "enum": ["registered", "ongoing", "ended", "error"]
+              },
+              "direction": {
+                "type": "string",
+                "enum": ["inbound", "outbound"]
+              },
+              "from_number": { "type": "string" },
+              "to_number": { "type": "string" },
+              "agent_id": { "type": "string" },
+              "duration_ms": { "type": "integer" },
+              "disconnection_reason": { "type": "string" },
+              "recording_url": { "type": "string" },
+              "public_log_url": { "type": "string" },
+              "error_code": { "type": "string" },
+              "error_message": { "type": "string" }
+            }
+          }
+        }
+      },
+      "PhoneCallRequest": {
+        "type": "object",
+        "required": ["chatbotId", "phone"],
+        "properties": {
+          "chatbotId": {
+            "type": "string",
+            "description": "ID del chatbot que iniciará la llamada."
+          },
+          "phone": {
+            "type": "string",
+            "description": "Número de destino. Se recomienda formato E.164 (p. ej., +5255...)."
+          }
+        }
+      },
+      "PhoneCallResponse": {
+        "type": "object",
+        "required": ["call_type", "call_id", "call_status"],
+        "properties": {
+          "call_type": {
+            "type": "string",
+            "enum": ["phone_call"],
+            "description": "Tipo de llamada."
+          },
+          "from_number": {
+            "type": "string",
+            "description": "Número origen (cuando esté disponible)."
+          },
+          "to_number": {
+            "type": "string",
+            "description": "Número destino normalizado."
+          },
+          "direction": {
+            "type": "string",
+            "enum": ["inbound", "outbound"],
+            "description": "Dirección de la llamada."
+          },
+          "call_id": {
+            "type": "string",
+            "description": "Identificador único de la llamada."
+          },
+          "agent_id": {
+            "type": "string",
+            "description": "Identificador del agente de voz subyacente (si aplica)."
+          },
+          "agent_version": {
+            "type": "integer",
+            "description": "Versión del agente (si aplica)."
+          },
+          "call_status": {
+            "type": "string",
+            "enum": ["registered", "ongoing", "ended", "error"],
+            "description": "Estado de la llamada."
+          },
+          "public_log_url": {
+            "type": "string",
+            "description": "URL de logs públicos (si aplica)."
+          },
+          "recording_url": {
+            "type": "string",
+            "description": "URL de grabación (si aplica)."
+          }
+        }
+      },
+      "ChatTextRequest": {
+        "type": "object",
+        "required": ["sessionId", "action", "chatInput", "chatbotId", "source"],
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "Identificador de sesión del usuario. Debe persistir entre mensajes."
+          },
+          "action": {
+            "type": "string",
+            "enum": ["sendMessage"],
+            "description": "Acción solicitada. Actualmente solo 'sendMessage'."
+          },
+          "chatInput": {
+            "type": "string",
+            "description": "Mensaje de texto del usuario."
+          },
+          "chatbotId": {
+            "type": "string",
+            "description": "ID del chatbot (obligatorio)."
+          },
+          "source": {
+            "type": "string",
+            "description": "Origen del mensaje (por ejemplo, 'web-widget', 'mobile-app')."
+          }
+        }
+      },
+      "ChatMultipartRequest": {
+        "type": "object",
+        "required": [
+          "file",
+          "sessionId",
+          "action",
+          "chatbotId",
+          "source",
+          "mediaType"
+        ],
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "description": "Archivo binario de audio o imagen."
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string",
+            "enum": ["sendMessage"]
+          },
+          "chatbotId": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "mediaType": {
+            "type": "string",
+            "enum": ["audio", "image"],
+            "description": "Tipo de contenido subido."
+          },
+          "format": {
+            "type": "string",
+            "description": "MIME type del archivo, p. ej. audio/webm, image/png."
+          },
+          "language": {
+            "type": "string",
+            "description": "Idioma esperado del audio (BCP-47), p. ej. es-ES."
+          },
+          "caption": {
+            "type": "string",
+            "description": "Texto adicional o prompt para imágenes."
+          }
+        }
+      },
+      "ChatResponse": {
+        "type": "object",
+        "required": ["output"],
+        "properties": {
+          "output": {
+            "type": "string",
+            "description": "Respuesta en texto del asistente."
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "Identificador de sesión reflejado."
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Código de error legible por máquina, p. ej., BOT_NOT_AVAILABLE, INVALID_INPUT."
+          },
+          "message": {
+            "type": "string",
+            "description": "Descripción del error."
+          }
+        }
       }
     }
   }

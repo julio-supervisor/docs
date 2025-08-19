@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" fill="none">
+    <rect width="1200" height="600" fill="#0B1220" />
+    <rect x="40" y="40" width="1120" height="520" rx="16" fill="#0F172A" stroke="#233042" />
+    <rect x="60" y="80" width="320" height="80" rx="12" fill="#111827" stroke="#233042" />
+    <rect x="60" y="180" width="320" height="280" rx="12" fill="#111827" stroke="#233042" />
+    <rect x="400" y="80" width="740" height="380" rx="12" fill="#111827" stroke="#233042" />
+    <rect x="400" y="480" width="740" height="60" rx="12" fill="#111827" stroke="#233042" />
+    <text x="60" y="70" font-family="Inter, Arial" font-size="18" fill="#9CA3AF">Dashboard — Agents</text>
+    <text x="60" y="170" font-family="Inter, Arial" font-size="16" fill="#6B7280">Cards, metrics and
+        recent events</text>
+    <text x="40" y="580" font-family="Inter, Arial" font-size="12" fill="#94A3B8">Placeholder — Hero
+        de producto con tarjetas de agentes y métricas</text>
+</svg>
