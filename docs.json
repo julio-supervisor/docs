@@ -26,6 +26,10 @@
             ]
           },
           {
+            "group": "Soporte",
+            "pages": ["sla"]
+          },
+          {
             "group": "Deploy",
             "pages": ["deploy/chat-widget"]
           },
