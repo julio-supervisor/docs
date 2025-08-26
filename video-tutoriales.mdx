@@ -1,0 +1,130 @@
+icon: play-circle
+title: Video tutoriales
+
+# Video tutoriales
+
+Aprende visualmente con una colección de videos cortos que cubren las tareas más comunes en Supervisor AI. Para evitar errores 500 por iframes externos (Canva / Freshdesk) migramos los videos a archivos locales `.mp4`. Descarga cada video desde Canva (Compartir → Descargar → MP4) y guárdalo en `videos/` con los nombres indicados.
+
+Guía de incorporación de un video local:
+
+1. Descarga el MP4 desde la fuente (Canva u otro host autorizado).
+2. Colócalo en la carpeta `videos/` del repositorio (creada si no existe).
+3. Usa la etiqueta `<video>` con `controls` y un `poster` opcional (PNG estático en `videos/posters/`).
+4. Evita iframes externos para reducir bloqueos CSP o timeouts en build.
+5. Verifica el peso (< 25 MB recomendado) para buena carga.
+
+Si aún no has añadido el archivo, verás un mensaje de placeholder debajo.
+
+## 📥 Descargar la grabación de una reunión
+
+Archivo esperado: `videos/como-descargar-reunion.mp4`
+
+Resumen rápido:
+
+1. Entra a tu espacio de trabajo.
+2. Ve a Reuniones → Historial.
+3. Abre la reunión que quieras.
+4. Haz clic en el ícono de la nube.
+5. Selecciona "Descargar grabación".
+6. La descarga iniciará en tu navegador.
+
+<video
+  controls
+  playsInline
+  style={{ width: "100%", maxWidth: 960, borderRadius: 12, background: "#111" }}
+>
+  <source src="/videos/como-descargar-reunion.mp4" type="video/mp4" />
+  Tu navegador no soporta video incrustado.
+</video>
+
+> Placeholder: si el video no carga, aún no se ha subido el archivo local. Descárgalo desde Canva y añádelo.
+
+## 🚀 Crea tu primer Supervisor
+
+Archivo esperado: `videos/crea-primer-supervisor.mp4`
+
+En este video verás cómo:
+
+- Navegar a la sección de Supervisores AI.
+- Configurar nombre, contexto y objetivo.
+- Redactar y mejorar instrucciones con IA.
+- Probar el supervisor con llamadas recientes.
+- Publicarlo para empezar a usarlo.
+
+<video
+  controls
+  playsInline
+  style={{ width: "100%", maxWidth: 960, borderRadius: 12, background: "#111" }}
+>
+  <source src="/videos/crea-primer-supervisor.mp4" type="video/mp4" />
+  Tu navegador no soporta video incrustado.
+</video>
+
+> Placeholder: añade el archivo MP4 para habilitar la reproducción.
+
+## 🛠️ Resolver dashboards de llamadas sin datos (Incidencia ETL)
+
+Cómo actuar cuando los dashboards de llamadas aparecen vacíos o desactualizados:
+
+Pasos clave (primer nivel soporte):
+
+- Confirmar alcance (todos o algunos usuarios).
+- Pedir refrescar / probar otro navegador / limpiar caché.
+- Verificar si hay incidencias similares activas.
+- Recopilar: workspace, dashboards afectados, hora del reporte, capturas.
+
+Escalar si: múltiples clientes afectados, >2h sin datos, mensajes relacionados con ETL o jobs.
+
+Información para escalar:
+
+- Resumen en 2–3 líneas.
+- Jobs potencialmente implicados: tracker_discoveries, tracker_evaluations, agent_performance.
+- Acciones ya probadas.
+- Impacto y cronología.
+
+Procedimiento técnico avanzado (resumen):
+
+1. Validar tablas discoveries, evaluations y agent_performance.
+2. Si es necesario (y con backup) truncar y reprocesar en orden.
+3. Monitorizar logs y refrescar cachés.
+4. Confirmar recuperación de datos y comunicar cierre.
+
+> Este tutorial aún no cuenta con video. Añade uno siguiendo la plantilla de los anteriores.
+
+## ⚙️ Reuniones "en procesamiento" tras pago inicial
+
+Guía para habilitar correctamente un nuevo cliente cuando sus reuniones quedan en estado de procesamiento:
+
+Checklist:
+
+1. Verificar reporte vía widget y confirmar pago.
+2. Notificar a Customer Success para alta del workspace en la cuenta de contacto.
+3. Asignar 500 minutos de cortesía.
+4. Activar POC (Hunter V3) desde back office.
+5. Reprocesar reuniones (masivo si ≤10, individual si >10).
+6. Validar minutas generadas y cerrar con confirmación al cliente.
+
+Notas:
+
+- Aplicar solo a clientes con pago confirmado.
+- Usar reprocesamiento masivo con precaución.
+
+Recursos útiles:
+
+- Back office Lovable: https://fbfedeaf-45ee-4ec5-b98a-a0b2103c0ffe.getsupervisor.ai
+
+> Este tutorial aún no cuenta con video. Añade uno siguiendo la plantilla de "Descargar grabación".
+
+---
+
+### ¿Faltan videos?
+
+Solicita uno a soporte indicando: objetivo, pasos clave y si requiere datos de ejemplo.
+
+### Próximas incorporaciones
+
+- Firma de webhooks y validación.
+- Personalización avanzada del Chat Widget.
+- Buenas prácticas de Knowledge.
+
+¿Tienes una sugerencia? Escríbenos: sistemas@getsupervisor.ai

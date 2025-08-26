@@ -27,7 +27,7 @@
           },
           {
             "group": "Soporte",
-            "pages": ["sla"]
+            "pages": ["sla", "video-tutoriales"]
           },
           {
             "group": "Deploy",
